@@ -1,0 +1,117 @@
+ncsim> 
+ncsim> database -open waves -into waves.shm -default
+Created default SHM database waves
+ncsim> probe -create -shm tb_day26_all.bin_data tb_day26_all.bin_ready tb_day26_\
+all.bin_valid tb_day26_all.bout_data tb_day26_all.bout_ready tb_day26_all.bout_v\
+alid tb_day26_all.brst tb_day26_all.clk tb_day26_all.din tb_day26_all.dload tb_d\
+ay26_all.dout tb_day26_all.drst tb_day26_all.errors tb_day26_all.ga tb_day26_all\
+.gand tb_day26_all.gb tb_day26_all.gnot tb_day26_all.gor tb_day26_all.hifire tb_\
+day26_all.hofire tb_day26_all.hor tb_day26_all.hov tb_day26_all.hr tb_day26_all.\
+hv tb_day26_all.i tb_day26_all.rr tb_day26_all.rready tb_day26_all.rv tb_day26_a\
+ll.sink_data tb_day26_all.sink_ready tb_day26_all.sink_valid tb_day26_all.source\
+_data tb_day26_all.source_ready tb_day26_all.source_valid tb_day26_all.tests tb_\
+day26_all.trst tb_day26_all.vclear tb_day26_all.vout tb_day26_all.vrst tb_day26_\
+all.vset
+Created probe 1
+ncsim> run
+
+==========================================================================
+             DAY 26 | VALID-READY DESIGN VERIFICATION
+==========================================================================
+ TEST | TEST DESCRIPTION               | ACTUAL   | EXPECTED | RESULT
+------|--------------------------------|----------|----------|--------
+
+TASK 1 | Gate-level logic
+ 1    |                                 NOT gate | 00000001 | ffffffff | PASS
+ 2    |                                 AND gate | 00000000 | 00000000 | PASS
+ 3    |                                  OR gate | 00000000 | 00000000 | PASS
+ 4    |                                 NOT gate | 00000001 | ffffffff | PASS
+ 5    |                                 AND gate | 00000000 | 00000000 | PASS
+ 6    |                                  OR gate | 00000001 | 00000001 | PASS
+ 7    |                                 NOT gate | 00000000 | fffffffe | PASS
+ 8    |                                 AND gate | 00000000 | 00000000 | PASS
+ 9    |                                  OR gate | 00000001 | 00000001 | PASS
+ 10   |                                 NOT gate | 00000000 | fffffffe | PASS
+ 11   |                                 AND gate | 00000001 | 00000001 | PASS
+ 12   |                                  OR gate | 00000001 | 00000001 | PASS
+
+TASK 2 | Ready logic
+ 13   |                           Ready equation | 00000001 | ffffffff | PASS
+ 14   |                           Ready equation | 00000001 | ffffffff | PASS
+ 15   |                           Ready equation | 00000000 | fffffffe | PASS
+ 16   |                           Ready equation | 00000001 | ffffffff | PASS
+
+TASK 3 | Handshake logic
+ 17   |                          Input handshake | 00000000 | 00000000 | PASS
+ 18   |                         Output handshake | 00000000 | 00000000 | PASS
+ 19   |                          Input handshake | 00000000 | 00000000 | PASS
+ 20   |                         Output handshake | 00000000 | 00000000 | PASS
+ 21   |                          Input handshake | 00000000 | 00000000 | PASS
+ 22   |                         Output handshake | 00000000 | 00000000 | PASS
+ 23   |                          Input handshake | 00000000 | 00000000 | PASS
+ 24   |                         Output handshake | 00000001 | 00000001 | PASS
+ 25   |                          Input handshake | 00000000 | 00000000 | PASS
+ 26   |                         Output handshake | 00000000 | 00000000 | PASS
+ 27   |                          Input handshake | 00000000 | 00000000 | PASS
+ 28   |                         Output handshake | 00000000 | 00000000 | PASS
+ 29   |                          Input handshake | 00000000 | 00000000 | PASS
+ 30   |                         Output handshake | 00000000 | 00000000 | PASS
+ 31   |                          Input handshake | 00000000 | 00000000 | PASS
+ 32   |                         Output handshake | 00000001 | 00000001 | PASS
+ 33   |                          Input handshake | 00000000 | 00000000 | PASS
+ 34   |                         Output handshake | 00000000 | 00000000 | PASS
+ 35   |                          Input handshake | 00000000 | 00000000 | PASS
+ 36   |                         Output handshake | 00000000 | 00000000 | PASS
+ 37   |                          Input handshake | 00000000 | 00000000 | PASS
+ 38   |                         Output handshake | 00000000 | 00000000 | PASS
+ 39   |                          Input handshake | 00000000 | 00000000 | PASS
+ 40   |                         Output handshake | 00000001 | 00000001 | PASS
+ 41   |                          Input handshake | 00000001 | 00000001 | PASS
+ 42   |                         Output handshake | 00000000 | 00000000 | PASS
+ 43   |                          Input handshake | 00000001 | 00000001 | PASS
+ 44   |                         Output handshake | 00000000 | 00000000 | PASS
+ 45   |                          Input handshake | 00000001 | 00000001 | PASS
+ 46   |                         Output handshake | 00000000 | 00000000 | PASS
+ 47   |                          Input handshake | 00000001 | 00000001 | PASS
+ 48   |                         Output handshake | 00000001 | 00000001 | PASS
+
+TASK 4 | Data register reset
+ 49   |                        Reset clears data | 00000000 | 00000000 | PASS
+
+TASK 5 | Data register load and hold
+ 50   |                         Load captures A5 | 000000a5 | 000000a5 | PASS
+ 51   |                            Hold keeps A5 | 000000a5 | 000000a5 | PASS
+
+TASK 6 | Valid register
+ 52   |                       Reset clears valid | 00000000 | 00000000 | PASS
+ 53   |                                Set valid | 00000001 | 00000001 | PASS
+ 54   |                              Clear valid | 00000000 | 00000000 | PASS
+
+TASK 7 | Buffer reset and input
+ 55   |                      Buffer starts empty | 00000000 | 00000000 | PASS
+ 56   |                                Accept A5 | 000001a5 | 000001a5 | PASS
+
+TASK 8 | Buffer stall and hold
+ 57   |                 Full buffer blocks input | 00000000 | 00000000 | PASS
+ 58   |                           Stall holds A5 | 000001a5 | 000001a5 | PASS
+
+TASK 9 | Replace and consume data
+ 59   |                Ready permits replacement | 00000001 | 00000001 | PASS
+ 60   |                    Replacement stores 3C | 0000013c | 0000013c | PASS
+ 61   |                   Consume empties buffer | 00000000 | 00000000 | PASS
+
+TASK 10 | Top-module integration
+ 62   |                                Top reset | 00000000 | 00000000 | PASS
+ 63   |                          Source sends D2 | 000001d2 | 000001d2 | PASS
+ 64   |                         Sink consumes D2 | 00000000 | 00000000 | PASS
+
+==========================================================================
+                         VERIFICATION SUMMARY
+==========================================================================
+ Total Checks  : 64
+ Failed Checks : 0
+ Final Result  : ALL TESTS PASSED
+==========================================================================
+Simulation complete via $finish(1) at time 157 NS + 0
+./day26_tb.v:228         $finish;
+ncsim> 
