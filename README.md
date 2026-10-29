@@ -1,141 +1,93 @@
-# Day 26 --- Valid-Ready Buffer Design and Verification
 
-```{=html}
+# Day 26 — Valid-Ready Buffer Design and Verification
+
 <p align="center">
-```
-**Digital VLSI • Verilog RTL • Valid-Ready Handshaking • Cadence Genus**
-```{=html}
+  <b>Digital VLSI | Verilog RTL | Functional Verification | Cadence Genus</b>
 </p>
-```
-```{=html}
+
 <p align="center">
-```
-`Specification → RTL → Testbench → Simulation → Synthesis → Area → Power → Timing → PPA Review`
-```{=html}
+  Specification → RTL → Testbench → Simulation → Synthesis → Area → Power → Timing → PPA Review
 </p>
-```
-```{=html}
+
 <p align="center">
-```
-`<img alt="Project" src="https://img.shields.io/badge/Project-Valid--Ready%20Buffer-blue">`{=html}
-`<img alt="HDL" src="https://img.shields.io/badge/HDL-Verilog-8A2BE2">`{=html}
-`<img alt="Synthesis" src="https://img.shields.io/badge/Synthesis-Cadence%20Genus-orange">`{=html}
-`<img alt="Verification" src="https://img.shields.io/badge/Verification-64%20Checks%20Reported-success">`{=html}
-```{=html}
+  <img src="https://img.shields.io/badge/Project-Valid--Ready%20Buffer-blue" alt="Project">
+  <img src="https://img.shields.io/badge/HDL-Verilog-purple" alt="Verilog HDL">
+  <img src="https://img.shields.io/badge/Simulation-Cadence%20NCSim-green" alt="Cadence NCSim">
+  <img src="https://img.shields.io/badge/Synthesis-Cadence%20Genus-orange" alt="Cadence Genus">
+  <img src="https://img.shields.io/badge/Checks-64%20Reported%20Pass-success" alt="Reported checks">
 </p>
-```
 
-------------------------------------------------------------------------
+---
 
-## 1. Project Information
+## 1. Project Overview
 
-  -----------------------------------------------------------------------
-  Parameter                           Details
-  ----------------------------------- -----------------------------------
-  **Project**                         Valid-Ready Buffer Design and
-                                      Verification
+This project implements and verifies a **Valid-Ready Buffer** using Verilog RTL. It explores data storage, valid-state tracking, handshake control, backpressure, and buffer operation under different input and output conditions.
 
-  **Author**                          Omkar Kalmesh Hadapad
+The design was simulated using Cadence NCSim and synthesized using Cadence Genus. The available reports were used to analyze the hierarchy, standard-cell mapping, area, estimated power, and a reported setup timing path.
 
-  **Domain**                          Digital VLSI / RTL Design /
-                                      Functional Verification
+### Key Highlights
 
-  **Design Type**                     Valid-ready buffer with data and
-                                      valid-state registers
+- Verilog RTL design and module hierarchy.
+- Self-checking testbench and functional simulation.
+- Valid-ready handshake and backpressure scenarios.
+- Reset, data load, hold, replacement, and consumption checks.
+- Cadence Genus synthesis and technology mapping.
+- Standard-cell area and hierarchy analysis.
+- Activity-based power estimation.
+- Setup timing and slack calculation.
+- PPA review with explicit evidence limitations.
 
-  **HDL**                             Verilog HDL
+---
 
-  **Simulation Tool**                 Cadence NCSim
+## 2. Project Information
 
-  **Synthesis Tool**                  Cadence Genus 21.14-s082_1
+| Parameter | Details |
+|---|---|
+| Project | Valid-Ready Buffer Design and Verification |
+| Domain | Digital VLSI / RTL Design / Functional Verification |
+| HDL | Verilog |
+| Simulation | Cadence NCSim |
+| Synthesis | Cadence Genus 21.14-s082_1 |
+| Technology library | `tsmc18` |
+| Top module | `top_valid_ready` |
+| Main buffer module | `valid_ready_buffer` |
+| Reported simulation checks | 64 pass, 0 fail |
+| Simulation completion | 157 ns |
+| Standard-cell instances | 34 |
+| Reported cell area | 798.336 library area units |
+| Estimated total power | 79.2611 µW |
+| Reported setup-path slack | +6.787 ns |
+| Physical-design status | Post-route PPA closure not established |
 
-  **Technology Library**              `tsmc18`
+> **Measurement notes**
+>
+> - The reported area unit has not been confirmed as µm².
+> - Power is based on activity frame `/stim#0/frame#0`.
+> - The timing result applies to one reported setup path, not necessarily every path in the design.
+> - No post-route or extracted-parasitic results were supplied.
 
-  **Top Module**                      `top_valid_ready`
+---
 
-  **Main Buffer Module**              `valid_ready_buffer`
+## 3. Design Objectives
 
-  **Reported Functional Checks**      64 reported pass, 0 reported fail
+1. Understand valid-ready handshaking.
+2. Implement data storage and valid-state tracking.
+3. Verify reset, load, and hold behavior.
+4. Test input acceptance and output consumption.
+5. Verify buffer stall and backpressure behavior.
+6. Check data replacement and valid-state transitions.
+7. Run a self-checking testbench using Cadence NCSim.
+8. Inspect the simulation results and waveform database.
+9. Synthesize the design using Cadence Genus.
+10. Analyze mapped cells, area distribution, power, and timing.
+11. Identify verification gaps before optimizing the RTL.
+12. Establish a baseline for future PPA comparisons.
 
-  **Simulation Completion**           `$finish` at 157 ns
+---
 
-  **Synthesis Cell Count**            34 standard-cell instances
+## 4. Design Hierarchy
 
-  **Reported Cell Area**              798.336 library area units
-
-  **Estimated Total Power**           79.2611 µW
-
-  **Reported Setup Path Slack**       +6787 ps (6.787 ns)
-
-  **Physical Design Status**          Post-route PPA closure not
-                                      established
-  -----------------------------------------------------------------------
-
-> **Measurement note:** The area unit has not been confirmed as µm². The
-> power report uses activity frame `/stim#0/frame#0`. The timing result
-> applies to the specific reported setup path; it does not prove that
-> every path is constrained or meets timing. No post-route or
-> extracted-parasitic results were supplied.
-
-------------------------------------------------------------------------
-
-## 2. Project Overview
-
-This project implements and verifies a valid-ready buffer design. The
-reported hierarchy includes a data register, valid register, handshake
-logic, and ready logic.
-
-The NCSim transcript reports 64 checks passed and zero failures, with
-simulation finishing at 157 ns. The tests cover gate-level logic, ready
-equations, handshake behavior, data-register reset/load/hold behavior,
-valid-register behavior, buffer reset and input acceptance, stall/hold
-behavior, data replacement and consumption, and top-level integration.
-
-The synthesis reports provide standard-cell mapping, hierarchy, power,
-and a setup timing path for `top_valid_ready`.
-
-The project covers:
-
--   Valid-ready interface fundamentals.
--   Data and valid-state storage.
--   Ready and handshake logic.
--   Reset, load, and hold behavior.
--   Buffer stall, replacement, and consumption scenarios.
--   Self-checking Verilog testbench execution.
--   Cadence NCSim simulation.
--   Cadence Genus standard-cell synthesis.
--   Cell area and hierarchy analysis.
--   Internal, switching, and leakage power interpretation.
--   Setup timing report interpretation.
--   Testbench checker validation and PPA evidence limitations.
-
-------------------------------------------------------------------------
-
-## 3. Objectives
-
-1.  Understand valid-ready handshaking.
-2.  Understand data storage and valid-state tracking.
-3.  Verify reset behavior of data and valid registers.
-4.  Verify load and hold behavior.
-5.  Verify input acceptance and backpressure/stall behavior.
-6.  Verify data replacement and consumption.
-7.  Verify top-level integration.
-8.  Run a self-checking Verilog testbench in Cadence NCSim.
-9.  Inspect the simulation log and waveform database.
-10. Synthesize the design using Cadence Genus.
-11. Analyze standard-cell count and area distribution.
-12. Interpret register, logic, and clock-category power.
-13. Calculate and interpret the reported setup slack.
-14. Identify verification and timing-analysis limitations.
-15. Document a reproducible baseline before optimization.
-
-------------------------------------------------------------------------
-
-## 4. Reported Architecture
-
-### Hierarchy
-
-``` text
+```text
 top_valid_ready
 └── u_buffer (valid_ready_buffer)
     ├── u_data_register (data_register)
@@ -147,409 +99,342 @@ top_valid_ready
     └── u_valid_register (valid_register)
 ```
 
-### Hierarchy block summary
+### Module Responsibilities
 
-  Instance             Module                 Function indicated by name
-  -------------------- ---------------------- ------------------------------
-  `u_buffer`           `valid_ready_buffer`   Main valid-ready buffer
-  `u_data_register`    `data_register`        Data storage
-  `u_handshake`        `handshake_logic`      Input/output handshake logic
-  `u_input_and`        `and_gate`             Input-side AND logic
-  `u_output_and`       `and_gate_2`           Output-side AND logic
-  `u_ready_logic`      `ready_logic`          Ready-generation logic
-  `u_or`               `or_gate`              OR logic inside ready logic
-  `u_valid_register`   `valid_register`       Valid-state storage
+| Instance | Module | Purpose indicated by the hierarchy |
+|---|---|---|
+| `u_buffer` | `valid_ready_buffer` | Main buffer module |
+| `u_data_register` | `data_register` | Data storage |
+| `u_handshake` | `handshake_logic` | Handshake control |
+| `u_input_and` | `and_gate` | Input-side logic |
+| `u_output_and` | `and_gate_2` | Output-side logic |
+| `u_ready_logic` | `ready_logic` | Ready-generation logic |
+| `u_or` | `or_gate` | OR logic within ready logic |
+| `u_valid_register` | `valid_register` | Valid-state storage |
 
-This table describes the reported hierarchy and names. Exact Boolean
-equations and signal connectivity must be confirmed from the RTL.
+This hierarchy is based on the supplied synthesis report. Exact Boolean equations and signal connectivity should be confirmed against the RTL source.
 
-### Conceptual valid-ready operation
+---
 
-In a conventional synchronous valid-ready interface, a transfer occurs
-at the active sampling edge when both `valid` and `ready` are asserted:
+## 5. Valid-Ready Handshake Fundamentals
 
-``` text
-transfer = valid AND ready
+In a conventional synchronous valid-ready interface, a transfer occurs at the active sampling edge when both `valid` and `ready` are asserted.
+
+```verilog
+transfer = valid & ready;
 ```
 
--   `valid` indicates that the producer is presenting valid data.
--   `ready` indicates that the consumer can accept data.
--   When both are asserted at the sampling edge, a transfer occurs.
--   If the buffer cannot accept new data, the interface must follow its
-    specified backpressure and data-hold behavior.
+- **Valid:** The producer indicates that the presented data is valid.
+- **Ready:** The receiver indicates that it can accept data.
+- **Transfer:** Both signals are asserted at the sampling edge.
+- **Backpressure:** The receiver deasserts `ready` when it cannot accept a transfer.
+- **Data hold:** While a transfer is stalled, the interface must preserve the required data and control state according to its specification.
 
-The exact protocol behavior should be confirmed against the design RTL
-and testbench.
+The exact protocol behavior must be confirmed against the implemented RTL and testbench.
 
-------------------------------------------------------------------------
+---
 
-## 5. Functional Verification
+## 6. Functional Verification
 
-### Reported NCSim results
+### Simulation Summary
 
-  Task        Test area                       Checks Reported result
-  ----------- ----------------------------- -------- ----------------------
-  1           Gate-level logic                    12 PASS
-  2           Ready logic                          4 PASS
-  3           Handshake logic                     36 PASS
-  4           Data-register reset                  1 PASS
-  5           Data-register load and hold          2 PASS
-  6           Valid register                       3 PASS
-  7           Buffer reset and input               2 PASS
-  8           Buffer stall and hold                2 PASS
-  9           Replace and consume data             3 PASS
-  10          Top-module integration               3 PASS
-  **Total**                                   **64** **64 reported pass**
+| Metric | Reported result |
+|---|---|
+| Total checks | 64 |
+| Failed checks | 0 |
+| Simulation completion | 157 ns |
+| Termination | `$finish` |
+| Testbench summary | `ALL TESTS PASSED` |
 
-### Selected reported scenarios
+### Reported Check Distribution
 
-  Scenario                        Actual     Expected Reported result
-  ------------------------- ------------ ------------ -----------------
-  Reset clears data           `00000000`   `00000000` PASS
-  Load captures `A5`          `000000a5`   `000000a5` PASS
-  Hold keeps `A5`             `000000a5`   `000000a5` PASS
-  Reset clears valid          `00000000`   `00000000` PASS
-  Set valid                   `00000001`   `00000001` PASS
-  Clear valid                 `00000000`   `00000000` PASS
-  Accept `A5`                 `000001a5`   `000001a5` PASS
-  Stall holds `A5`            `000001a5`   `000001a5` PASS
-  Replacement stores `3C`     `0000013c`   `0000013c` PASS
-  Consume empties buffer      `00000000`   `00000000` PASS
-  Source sends `D2`           `000001d2`   `000001d2` PASS
-  Sink consumes `D2`          `00000000`   `00000000` PASS
+| Test category | Checks | Reported result |
+|---|---:|---|
+| Gate-level logic | 12 | PASS |
+| Ready logic | 4 | PASS |
+| Handshake logic | 36 | PASS |
+| Data-register reset | 1 | PASS |
+| Data-register load and hold | 2 | PASS |
+| Valid register | 3 | PASS |
+| Buffer reset and input | 2 | PASS |
+| Buffer stall and hold | 2 | PASS |
+| Replace and consume data | 3 | PASS |
+| Top-module integration | 3 | PASS |
+| **Total** | **64** | **64 reported pass** |
 
-### Verification summary
+### Selected Reported Scenarios
 
-  Metric                           Reported result
-  --------------------------- --------------------
-  Total checks                              **64**
-  Failed checks                              **0**
-  Simulation completion                 **157 ns**
-  Termination                            `$finish`
-  Overall testbench summary     `ALL TESTS PASSED`
+| Scenario | Actual | Expected | Reported result |
+|---|---|---|---|
+| Reset clears data | `00000000` | `00000000` | PASS |
+| Load captures `A5` | `000000a5` | `000000a5` | PASS |
+| Hold keeps `A5` | `000000a5` | `000000a5` | PASS |
+| Reset clears valid | `00000000` | `00000000` | PASS |
+| Set valid | `00000001` | `00000001` | PASS |
+| Clear valid | `00000000` | `00000000` | PASS |
+| Accept `A5` | `000001a5` | `000001a5` | PASS |
+| Stall holds `A5` | `000001a5` | `000001a5` | PASS |
+| Replace with `3C` | `0000013c` | `0000013c` | PASS |
+| Consume empties buffer | `00000000` | `00000000` | PASS |
+| Source sends `D2` | `000001d2` | `000001d2` | PASS |
+| Sink consumes `D2` | `00000000` | `00000000` | PASS |
 
-### Verification caveat: NOT-gate expected values
+### Verification Caveat: NOT-Gate Checks
 
-The transcript reports some NOT-gate checks as passing even though the
-displayed actual and expected values appear inconsistent with ordinary
-32-bit bitwise inversion. For example, actual `00000001` is shown
-against expected `ffffffff`, and actual `00000000` against expected
-`fffffffe`.
+Some reported NOT-gate checks require further investigation. The transcript shows examples where the actual and expected values appear inconsistent with ordinary 32-bit bitwise inversion, despite the checks being marked PASS:
 
-These lines warrant inspection of the testbench's expected-value
-expressions, operand widths, and comparison/reporting logic. The log
-alone does not establish the cause. Therefore, the summary should be
-described as **64 checks reported passing**, while independent
-validation of those NOT-gate checks remains pending until the checker is
-reviewed.
+| Actual | Reported expected |
+|---|---|
+| `00000001` | `ffffffff` |
+| `00000000` | `fffffffe` |
 
-For stronger verification, also test reset transitions, prolonged
-backpressure, repeated replacement/consumption, and all legal
-combinations of valid and ready.
+The transcript alone does not establish the cause. Review the expected-value expressions, operand widths, comparison logic, and pass/fail reporting in the testbench before treating these checks as independently validated.
 
-------------------------------------------------------------------------
+**Verification status:** 64 checks reported passing; NOT-gate checker correctness remains to be confirmed.
 
-## 6. Genus Synthesis Results
+Recommended additional tests:
 
-The supplied Cadence Genus reports provide the following synthesis
-results.
+- Reset assertion and deassertion.
+- Prolonged backpressure.
+- Repeated input acceptance and output consumption.
+- Simultaneous input and output activity.
+- Data stability during stalls.
+- Valid-state behavior for every legal handshake condition.
+- Correctness of every testbench comparison.
 
-  Metric                                       Reported value
-  -------------------------- --------------------------------
-  Top module                                `top_valid_ready`
-  Standard-cell instances                              **34**
-  Total reported cell area     **798.336 library area units**
-  Technology library                                 `tsmc18`
-  Operating condition                  `slow (balanced_tree)`
-  Wireload mode                                    `enclosed`
-  Area mode                                  `timing library`
-  Synthesis tool                   Cadence Genus 21.14-s082_1
+---
 
-These are synthesis-stage results. The physical area unit is not
-confirmed as µm², and post-placement/post-route closure has not been
-demonstrated.
+## 7. Cadence Genus Synthesis Results
 
-------------------------------------------------------------------------
+| Metric | Reported value |
+|---|---|
+| Top module | `top_valid_ready` |
+| Synthesis tool | Cadence Genus 21.14-s082_1 |
+| Technology library | `tsmc18` |
+| Operating condition | `slow (balanced_tree)` |
+| Wireload mode | `enclosed` |
+| Area mode | `timing library` |
+| Standard-cell instances | 34 |
+| Total reported area | 798.336 library area units |
 
-## 7. Standard-Cell Mapping Analysis
+These are synthesis-stage results. The area unit has not been confirmed as µm², and physical-design closure has not been established.
 
-### Reported cell breakdown
+---
 
-  Standard cell     Instances   Reported area
-  --------------- ----------- ---------------
-  `DFFHQX1`                 9         479.002
-  `AOI22X1`                 8         133.056
-  `NOR2XL`                  8          79.834
-  `AND2X2`                  2          26.611
-  `INVX1`                   2          13.306
-  `NAND3BX1`                1          16.632
-  `NOR2BX1`                 1          13.306
-  `OAI21XL`                 1          13.306
-  `OR2X2`                   1          13.306
-  `NOR2X1`                  1           9.979
-  **Total**            **34**     **798.336**
+## 8. Standard-Cell Mapping and Area Analysis
 
-### Area distribution by category
+### Cell Breakdown
 
-  Category           Instances          Area   Reported share
-  ---------------- ----------- ------------- ----------------
-  Sequential                 9       479.002            60.0%
-  Inverter                   2        13.306             1.7%
-  Logic                     23       306.029            38.3%
-  Physical cells             0         0.000             0.0%
-  **Total**             **34**   **798.336**       **100.0%**
+| Standard cell | Instances | Reported area |
+|---|---:|---:|
+| `DFFHQX1` | 9 | 479.002 |
+| `AOI22X1` | 8 | 133.056 |
+| `NOR2XL` | 8 | 79.834 |
+| `AND2X2` | 2 | 26.611 |
+| `INVX1` | 2 | 13.306 |
+| `NAND3BX1` | 1 | 16.632 |
+| `NOR2BX1` | 1 | 13.306 |
+| `OAI21XL` | 1 | 13.306 |
+| `OR2X2` | 1 | 13.306 |
+| `NOR2X1` | 1 | 9.979 |
+| **Total** | **34** | **798.336** |
+
+### Area Distribution
+
+| Category | Instances | Area | Reported share |
+|---|---:|---:|---:|
+| Sequential | 9 | 479.002 | 60.0% |
+| Inverter | 2 | 13.306 | 1.7% |
+| Logic | 23 | 306.029 | 38.3% |
+| Physical cells | 0 | 0.000 | 0.0% |
+| **Total** | **34** | **798.336** | **100.0%** |
+
+### Observations
+
+- Sequential cells account for 60.0% of the reported cell area.
+- The nine `DFFHQX1` instances form the largest area category.
+- `AOI22X1` and `NOR2XL` are the largest combinational cell groups by instance count.
+- The `u_data_register` hierarchy accounts for 645.322 area units, approximately 80.83% of the total.
+- Hierarchy area includes the mapped cells attributed to that hierarchy; it should not be interpreted as flip-flop area alone.
+
+### Area Optimization Plan
+
+1. Inspect the RTL and mapped netlist for `u_data_register`.
+2. Confirm the required data width and storage behavior.
+3. Check whether redundant logic can be removed without changing functionality.
+4. Review ready and handshake logic before modifying control conditions.
+5. Run functional regression after every RTL modification.
+6. Compare synthesis reports under consistent constraints and library settings.
+
+---
+
+## 9. Hierarchical Area Analysis
+
+| Hierarchy block | Cell count | Reported area | Approximate share |
+|---|---:|---:|---:|
+| `u_data_register` | 25 | 645.322 | 80.83% |
+| `u_handshake` | 2 | 26.611 | 3.33% |
+| `u_ready_logic` | 2 | 19.958 | 2.50% |
+| `u_valid_register` | 4 | 93.139 | 11.67% |
+| **Top-level total** | **34** | **798.336** | **100% approximately** |
+
+The data-register hierarchy is the largest reported area contributor. It is a logical starting point for investigation, but optimization should be guided by the RTL, timing requirements, and required buffer behavior.
+
+---
+
+## 10. Power Analysis
+
+The supplied report describes power for `/top_valid_ready`, using activity frame `/stim#0/frame#0`.
+
+### Power by Category
+
+| Category | Reported power (W) | Reported power (µW) | Share |
+|---|---:|---:|---:|
+| Register | `5.66854e-05` | 56.6854 | 71.52% |
+| Logic | `1.57260e-05` | 15.7260 | 19.84% |
+| Clock | `6.84968e-06` | 6.84968 | 8.64% |
+| **Total** | **`7.92611e-05`** | **79.2611** | **100%** |
+
+### Power Components
+
+| Component | Reported power | Share |
+|---|---:|---:|
+| Internal | 63.2657 µW | 79.82% |
+| Switching | 15.9709 µW | 20.15% |
+| Leakage | 0.0245062 µW | 0.03% |
+| **Total** | **79.2611 µW** | **100% approximately** |
 
 ### Interpretation
 
--   Sequential cells account for 60.0% of the reported cell area.
--   The nine `DFFHQX1` cells are the largest area category.
--   `AOI22X1` and `NOR2XL` are the largest individual combinational cell
-    groups by instance count.
--   The hierarchy report attributes 645.322 area units to
-    `u_data_register`. This can include both storage cells and
-    combinational logic; it should not be equated with flip-flop area
-    alone.
--   Cell names and counts do not by themselves prove the exact RTL
-    function of each mapped cell.
+- Register-category power is the largest reported category at 71.52%.
+- Internal power is the largest reported component at 79.82%.
+- Switching power depends on signal activity and effective capacitance.
+- The clock category contributes 6.84968 µW.
+- The result is an activity-based estimate, not a measurement of fabricated silicon.
 
-------------------------------------------------------------------------
+For meaningful comparisons, keep stimulus, clock definitions, activity annotation, operating conditions, and analysis settings consistent. The supplied report does not establish extracted post-route parasitics.
 
-## 8. Hierarchical Area Analysis
+---
 
-### Reported hierarchy
+## 11. Timing Analysis
 
-  Hierarchy block         Cell count   Reported area        Approximate share
-  --------------------- ------------ --------------- ------------------------
-  `u_data_register`               25         645.322                   80.83%
-  `u_handshake`                    2          26.611                    3.33%
-  `u_ready_logic`                  2          19.958                    2.50%
-  `u_valid_register`               4          93.139                   11.67%
-  **Top-level total**         **34**     **798.336**   **100% approximately**
+The supplied Genus timing report identifies one setup path from `sink_ready` to a data-register input.
 
-Percentages may not sum exactly to 100% because of rounding.
+### Path Summary
 
-### Main observation
+| Timing item | Reported value |
+|---|---|
+| Path status | `MET` |
+| Path group | `clk` |
+| Startpoint | `sink_ready` |
+| Endpoint | `u_buffer/u_data_register/data_out_reg[7]/D` |
+| Capture clock edge | 10000 ps |
+| Input delay | 1000 ps |
+| Setup time | 323 ps |
+| Clock uncertainty | 1000 ps |
+| Data-path delay | 890 ps |
+| Required time | 8677 ps |
+| Reported slack | **6787 ps (6.787 ns)** |
 
-The data-register hierarchy is the largest reported area contributor,
-accounting for approximately 80.83% of total area. It is the first block
-to inspect for area optimization, but any change must preserve the
-required data-storage and stall/hold behavior.
+### Reported Combinational Path
 
-### Optimization priorities
-
-1.  Inspect the RTL and mapped cells inside `u_data_register`.
-2.  Confirm that the implemented register width and hold behavior match
-    the specification.
-3.  Inspect the ready and handshake paths before changing control logic.
-4.  Preserve reset and valid-ready protocol behavior.
-5.  Re-run the same testbench and synthesis flow after each RTL change.
-6.  Compare area results only when library, constraints, and synthesis
-    settings are consistent.
-
-------------------------------------------------------------------------
-
-## 9. Power Analysis
-
-The supplied power report is for:
-
-``` text
-Instance: /top_valid_ready
-Power Unit: W
-PDB Frame: /stim#0/frame#0
-```
-
-### Power by category
-
-  Category            Total power (W)   Total power (µW)      Share
-  --------------- ------------------- ------------------ ----------
-  Register              `5.66854e-05`            56.6854     71.52%
-  Logic                 `1.57260e-05`            15.7260     19.84%
-  Clock                 `6.84968e-06`            6.84968      8.64%
-  Memory                            0                  0         0%
-  Latch                             0                  0         0%
-  Bbox, pad, PM                     0                  0         0%
-  **Total**         **`7.92611e-05`**        **79.2611**   **100%**
-
-### Internal, switching and leakage power
-
-  Component     Reported power                    Share
-  ----------- ---------------- ------------------------
-  Internal          63.2657 µW                   79.82%
-  Switching         15.9709 µW                   20.15%
-  Leakage         0.0245062 µW                    0.03%
-  **Total**     **79.2611 µW**   **100% approximately**
-
-### Interpretation
-
--   Register-category power dominates the estimate at 71.52%.
--   Internal power is the largest power component at 79.82%.
--   Switching power depends on signal activity and effective
-    capacitance.
--   The clock category contributes 6.84968 µW in the supplied report.
--   These values are an activity-based estimate, not measured silicon
-    power.
-
-Before comparing designs, use consistent stimulus, clock definitions,
-activity annotation, operating conditions, and analysis settings. The
-supplied report does not establish extracted post-route parasitics.
-
-------------------------------------------------------------------------
-
-## 10. Timing Analysis
-
-The supplied Genus timing report contains the following setup path.
-
-### Reported path summary
-
-  Timing item          Reported value
-  -------------------- ----------------------------------------------
-  Path status          `MET`
-  Path group           `clk`
-  Startpoint           `sink_ready`
-  Endpoint             `u_buffer/u_data_register/data_out_reg[7]/D`
-  Capture clock edge   10000 ps
-  Input delay          1000 ps
-  Setup time           323 ps
-  Clock uncertainty    1000 ps
-  Data-path delay      890 ps
-  Required time        8677 ps
-  Reported slack       **6787 ps (6.787 ns)**
-
-### Reported combinational path
-
-``` text
+```text
 sink_ready
     |
     v
-OR2X2
+  OR2X2
     |
     v
-AND2X2
+  AND2X2
     |
     v
-INVX1
+   INVX1
     |
     v
-AOI22X1
+  AOI22X1
     |
     v
-NOR2XL
+  NOR2XL
     |
     v
 data_out_reg[7]/D
 ```
 
-### Slack calculation
+### Slack Calculation
 
 Required time:
 
-\[ T\_{`\text{required}`{=tex}}=10000-323-1000=8677`\text{ ps}`{=tex} \]
+\[
+T_{\text{required}} = 10000 - 323 - 1000 = 8677\text{ ps}
+\]
 
 Arrival time:
 
-\[ T\_{`\text{arrival}`{=tex}}=1000+890=1890`\text{ ps}`{=tex} \]
+\[
+T_{\text{arrival}} = 1000 + 890 = 1890\text{ ps}
+\]
 
 Slack:
 
-\[ `\text{Slack}`{=tex}=8677-1890=`\boxed{6787\text{ ps}}`{=tex} \]
+\[
+\text{Slack} = 8677 - 1890 = 6787\text{ ps}
+\]
+
+\[
+\boxed{\text{Slack} = +6.787\text{ ns}}
+\]
 
 The calculation matches the reported slack.
 
-### Timing interpretation
+### Timing Interpretation
 
--   The specific reported setup path is marked `MET` with positive
-    slack.
--   The path is an input-to-register path from `sink_ready` to a
-    data-register D pin.
--   The 0.890 ns data-path delay is not the same as setup slack.
--   This result does not prove that every path meets timing.
--   A complete timing summary is needed to establish overall setup/hold
-    status and confirm that all relevant paths are constrained.
--   The synthesis report uses `slow (balanced_tree)` and `enclosed`
-    wireload settings; it is not post-route timing evidence.
+- The specific reported setup path is marked `MET`.
+- Its reported slack is +6.787 ns.
+- The data-path delay of 0.890 ns is not the same as setup slack.
+- One passing path does not establish global timing closure.
+- A complete timing summary is required to assess all relevant setup and hold paths.
+- The reported wireload settings do not constitute post-route timing evidence.
 
-------------------------------------------------------------------------
+---
 
-## 11. Combined PPA Snapshot
+## 12. Combined PPA Snapshot
 
-  -------------------------------------------------------------------------
-  Metric                                      Result Qualification
-  --------------------- ---------------------------- ----------------------
-  Functional simulation    64 pass / 0 fail reported NOT-gate checker needs
-                                                     review
+| Metric | Reported result | Qualification |
+|---|---|---|
+| Functional simulation | 64 pass / 0 fail reported | NOT-gate checker requires review |
+| Simulation completion | 157 ns | `$finish` reported |
+| Standard-cell instances | 34 | Synthesis report |
+| Cell area | 798.336 area units | Unit not confirmed as µm² |
+| Estimated total power | 79.2611 µW | Activity-frame-based estimate |
+| Largest hierarchy | `u_data_register` | 645.322 area units |
+| Largest power category | Register | 56.6854 µW |
+| Setup-path slack | +6.787 ns | One reported path |
+| Overall timing closure | Not established | Full timing evidence required |
+| Post-route PPA closure | Not established | Physical implementation evidence unavailable |
 
-  Simulation completion                       157 ns `$finish` shown
+---
 
-  Standard-cell                                   34 Genus synthesis report
-  instances                                          
+## 13. Recommended Validation Workflow
 
-  Reported cell area              798.336 area units Unit not confirmed as
-                                                     µm²
+1. **Review the testbench:** Investigate the inconsistent NOT-gate expected values and comparison logic.
+2. **Confirm functionality:** Re-run reset, load, hold, stall, replacement, and consumption tests.
+3. **Inspect the RTL:** Verify data width, valid-state updates, and handshake conditions.
+4. **Review synthesis mapping:** Identify the cells contributing to the data-register hierarchy area.
+5. **Inspect complete timing reports:** Check path coverage, constraints, setup, and hold.
+6. **Validate power inputs:** Confirm the activity source and analysis assumptions.
+7. **Re-run the baseline:** Preserve reports and logs before optimization.
+8. **Optimize incrementally:** Change one item at a time and repeat functional regression.
+9. **Compare PPA consistently:** Use the same library, constraints, and tool settings.
+10. **Document evidence:** Distinguish synthesis estimates from placed-and-routed results.
 
-  Estimated total power                   79.2611 µW Activity-frame-based
-                                                     estimate
+Do not optimize area or power at the expense of functional correctness.
 
-  Largest hierarchy                `u_data_register` 645.322 area units
-  block                                              
+---
 
-  Largest power                             Register 56.6854 µW
-  category                                           
+## 14. Suggested Repository Structure
 
-  Reported setup path                      +6.787 ns One path only
-  slack                                              
-
-  Overall timing                     Not established Full timing summary
-  closure                                            required
-
-  Post-route PPA                     Not established Physical
-  closure                                            implementation
-                                                     evidence not supplied
-  -------------------------------------------------------------------------
-
-------------------------------------------------------------------------
-
-## 12. Recommended Optimization and Validation Plan
-
-  -----------------------------------------------------------------------
-  Priority                Action                  Reason
-  ----------------------- ----------------------- -----------------------
-  1                       Review NOT-gate         Some displayed
-                          expected-value and      actual/expected pairs
-                          comparison logic        appear inconsistent
-                                                  despite PASS
-
-  2                       Review                  It dominates reported
-                          `u_data_register` RTL   area
-                          and mapped netlist      
-
-  3                       Review valid-ready      Must remain correct
-                          stall and hold behavior under backpressure
-
-  4                       Inspect the complete    One passing path does
-                          timing summary          not establish global
-                                                  timing closure
-
-  5                       Validate power-analysis Enables meaningful
-                          activity and settings   power comparisons
-
-  6                       Re-run functional       Protects behavior
-                          simulation after RTL    against regressions
-                          changes                 
-
-  7                       Re-run Genus area,      Creates a consistent
-                          power, and timing       before/after PPA
-                          reports                 comparison
-  -----------------------------------------------------------------------
-
-Do not change RTL solely to reduce area or power before identifying the
-functional and timing consequences.
-
-------------------------------------------------------------------------
-
-## 13. Suggested Repository Structure
-
-``` text
-day26-valid-ready-buffer/
+```text
+day26-valid-ready-buffer-verilog-genus/
 ├── README.md
 ├── rtl/
 │   ├── top_valid_ready.v
@@ -568,99 +453,90 @@ day26-valid-ready-buffer/
 │   └── waves.shm/
 ├── genus/
 │   ├── constraints_top.sdc
-│   ├── reports/
-│   │   ├── hierarchy.rpt
-│   │   ├── area.rpt
-│   │   ├── power.rpt
-│   │   └── timing.rpt
 │   ├── mapped_netlist.v
-│   └── synthesis.log
+│   ├── synthesis.log
+│   └── reports/
+│       ├── hierarchy.rpt
+│       ├── area.rpt
+│       ├── power.rpt
+│       └── timing.rpt
 └── docs/
     └── ppa_analysis.md
 ```
 
-This is a suggested layout, not confirmation that all listed files
-exist. Rename entries to match the actual repository contents.
+> This is a suggested structure. It does not imply that every listed file exists in the current repository. Adjust filenames to match the actual project.
 
-------------------------------------------------------------------------
+---
 
-## 14. Industry Relevance
+## 15. Industry Relevance
 
-This project demonstrates concepts relevant to:
+This project demonstrates practical exposure to:
 
--   Synthesizable Verilog RTL.
--   Valid-ready interface design.
--   Data storage and control logic.
--   Functional verification and self-checking testbenches.
--   Cadence NCSim simulation.
--   Cadence Genus technology mapping.
--   Standard-cell area analysis.
--   Power estimation and activity interpretation.
--   Setup timing and slack calculations.
--   RTL optimization with functional regression testing.
--   Engineering documentation and PPA reporting.
+- Synthesizable Verilog RTL.
+- Valid-ready interface concepts.
+- Data storage and control logic.
+- Self-checking functional verification.
+- Cadence NCSim simulation.
+- Cadence Genus technology mapping.
+- Standard-cell area analysis.
+- Activity-based power estimation.
+- Setup timing and slack calculations.
+- RTL optimization and regression testing.
+- Technical documentation and PPA reporting.
 
-These concepts are relevant to entry-level RTL Design, ASIC Design, FPGA
-Design, and Design Verification roles.
+These concepts are relevant to entry-level RTL Design, ASIC Design, FPGA Design, and Design Verification roles.
 
-------------------------------------------------------------------------
+---
 
-## 15. Interview Questions
+## 16. Interview Questions
 
-1.  What is a valid-ready interface?
-2.  Under what condition does a valid-ready transfer occur?
-3.  What is backpressure?
-4.  What should happen to data while `valid` is asserted and `ready` is
-    deasserted?
-5.  What is the purpose of a data register in a buffer?
-6.  Why are data and valid state often updated together?
-7.  What is the difference between combinational and sequential logic?
-8.  How do reset, load, and hold conditions affect a register?
-9.  What does technology mapping do?
-10. What is the difference between hierarchy area and standard-cell
-    area?
+1. What is a valid-ready interface?
+2. When does a valid-ready transfer occur?
+3. What is backpressure?
+4. How should data behave when `valid = 1` and `ready = 0`?
+5. What is the purpose of a data register?
+6. Why must valid state and data storage remain consistent?
+7. What is the difference between combinational and sequential logic?
+8. How do reset, load, and hold affect a register?
+9. What is technology mapping?
+10. What is the difference between hierarchy area and standard-cell area?
 11. What are internal, switching, and leakage power?
-12. What is a setup check?
+12. What is a setup timing check?
 13. How is setup slack calculated?
 14. Why is data-path delay different from setup slack?
-15. Does one `MET` path prove overall timing closure?
-16. Why must a self-checking testbench be checked for correctness?
-17. How would you test long-duration backpressure?
-18. What additional evidence is needed to claim post-route PPA closure?
+15. Why does one `MET` path not prove global timing closure?
+16. Why should a self-checking testbench itself be validated?
+17. How would you test prolonged backpressure?
+18. What evidence is needed to claim post-route PPA closure?
 
-------------------------------------------------------------------------
+---
 
-## 16. Project Status
+## 17. Project Status
 
-  Stage                                Status
-  ------------------------------------ ------------------------------------------
-  Functional simulation                64 pass / 0 fail reported
-  Testbench checker review             NOT-gate expected values need inspection
-  Simulation completion                Completed at 157 ns
-  Hierarchy report                     Reviewed
-  Standard-cell area report            Reviewed
-  Power report                         Reviewed
-  One setup timing path                `MET`, +6.787 ns slack
-  Full setup/hold timing closure       Not established
-  Post-route physical implementation   Not established
-  Final PPA closure                    Pending further validation
+| Stage | Status |
+|---|---|
+| Functional simulation | 64 pass / 0 fail reported |
+| NOT-gate checker review | Pending |
+| Simulation completion | 157 ns |
+| Hierarchy report | Reviewed |
+| Standard-cell area report | Reviewed |
+| Power report | Reviewed |
+| One setup timing path | `MET`, +6.787 ns slack |
+| Full setup/hold timing closure | Not established |
+| Post-route physical implementation | Not established |
+| Final PPA closure | Pending further validation |
 
-------------------------------------------------------------------------
+---
 
-## 17. Author
+## 18. Author
 
-**Omkar Kalmesh Hadapad**\
+**Omkar Kalmesh Hadapad**  
 Electronics and Communication Engineering
 
-Digital VLSI • Verilog RTL • Functional Verification • Cadence Genus
+Digital VLSI | Verilog RTL | Functional Verification | Cadence Genus
 
-------------------------------------------------------------------------
+---
 
-```{=html}
 <p align="center">
-```
-**Day 26 --- Valid-Ready Buffer Design, Verification and Synthesis
-Analysis**
-```{=html}
+  <b>Day 26 — Valid-Ready Buffer Design, Verification and Synthesis Analysis</b>
 </p>
-```
